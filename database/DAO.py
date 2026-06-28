@@ -67,3 +67,24 @@ class DAO():
         cursor.close()
         conn.close()
         return results
+
+    @staticmethod
+    def setOldestDOB(minY, maxY, idMapConstructors):
+        conn = DBConnect.get_connection()
+
+        cursor = conn.cursor(dictionary=True)
+        query = """SELECT res.constructorId as cId, MIN(d.dob) as oldest_driver_dob
+                FROM results res
+                    JOIN drivers d ON res.driverId = d.driverId 
+                    JOIN races r ON res.raceId = r.raceId 
+                WHERE r.year>=%s AND r.year<=%s AND res.`position` IS NOT NULL 
+                GROUP BY res.constructorId"""
+
+        cursor.execute(query, (minY, maxY))
+
+        for row in cursor:
+            idMapConstructors[row["cId"]].oldest_driver_dob = row["oldest_driver_dob"]
+
+        cursor.close()
+        conn.close()
+        return

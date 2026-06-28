@@ -45,13 +45,19 @@ class Controller:
     def handleCerca(self, e):
         self._view.txt_result.controls.clear()
         try:
-            K = int(self._view._txtInK)
+            K = int(self._view._txtInK.value)
         except ValueError:
             self._view.txt_result.controls.append(ft.Text(f"Inserire un numero intero", color="red"))
             return
         if K is None or K>len(list(nx.connected_components(self._model.graph))):
             self._view.txt_result.controls.append(ft.Text(f"Inserire un numero intero <= del numero di componenti connesse del grafo", color="red"))
             return
+
+        sol = self._model.getSetConstructors(int(self._view._ddAnno1.value), int(self._view._ddAnno2.value), K)
+        self._view.txt_result.controls.append(ft.Text(f"Trovato un set", color = "blue"))
+        for c in sol:
+            self._view.txt_result.controls.append(ft.Text(f"{c}, data del più vecchio: {c.oldest_driver_dob}"))
+
 
 
 
